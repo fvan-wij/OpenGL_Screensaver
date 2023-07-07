@@ -165,8 +165,8 @@ int main(void)
 {
     GLFWwindow*     window;
     NDC_MousePos    mouse;
-    const int       width = 800;
-    const int       height = 800;
+    const int       width = 1600;
+    const int       height = 1600;
     const int       nOfShapes = 150;
     s_vec2          t_pos;
 
@@ -198,15 +198,15 @@ int main(void)
 
 
     float t1[] = {
-        -0.25f, -0.25f, 0.0f,
-         0.25f, -0.25f, 0.0f,
-         0.0f,  0.25f, 0.0f,
+        -1.0f, 	1.0f, 0.0f,
+         1.0f,  1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
     };
 
     float t2[] = {
-        -0.4f, -0.4f, 0.0f,
-         0.0f, -0.4f, 0.0f,
-        -0.25f, -0.1f, 0.0f,
+         1.0f, 	1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
     };
 
     int indexCount = (sizeof(t1) / sizeof(float));
@@ -237,11 +237,8 @@ int main(void)
     glEnableVertexAttribArray(0);
 
 
-    IndexBuffer ib(indices, 6);
-
-    ShaderProgramSource shaderSource = ParseShader("/home/flip/Documents/OpenGL_screensaver/res/shaders/Strength.shader");
-	// std::cout << shaderSource.VertexSource << std::endl;
-	// std::cout << shaderSource.FragmentSource << std::endl;
+    // IndexBuffer ib(indices, 6);
+    ShaderProgramSource shaderSource = ParseShader("/home/flip/Documents/OpenGL_Screensaver/res/shaders/Strength.shader");
 
     unsigned int shader = CreateShader(shaderSource.VertexSource, shaderSource.FragmentSource);
     glUseProgram(shader);
@@ -249,6 +246,7 @@ int main(void)
     int color = glGetUniformLocation(shader, "u_Color");
     int transformLoc = glGetUniformLocation(shader, "u_Transform");
     int sineDriver = glGetUniformLocation(shader, "sineDriver");
+    int timeFrag = glGetUniformLocation(shader, "u_Time");
 
     float inc = 0.0001f;
     float incX;
@@ -288,17 +286,23 @@ int main(void)
         t_pos.x += incX / 50;
         t_pos.y += incY / 50;
         processInput(window);
-        
+
+       	glUniform1f(timeFrag, inc * 4);
+		glUniform2f(transformLoc, mouse.x, mouse.y);
 
         //Drawcall
-        for (int i = 0; i < nOfShapes; i++)
-        {
-            glUniform3f(transformLoc, t_pos.x + randomX[i], t_pos.y + randomY[i], 0.0);
-            glUniform1f(sineDriver, sin(inc));
-            glUniform3f(color, randomX[i], randomY[i], sin(inc));
-            glDrawArrays(GL_TRIANGLES, 0, nOfVertices);
-        }
+        // for (int i = 0; i < nOfShapes; i++)
+        // {
+        //     glUniform3f(transformLoc, t_pos.x + randomX[i], t_pos.y + randomY[i], 0.0);
+        //     glUniform1f(sineDriver, sin(inc));
+        //     glUniform3f(color, randomX[i], randomY[i], sin(inc));
+        //     glDrawArrays(GL_TRIANGLES, 0, nOfVertices);
+        // }
 
+    	glBindVertexArray(vao1);
+        glDrawArrays(GL_TRIANGLES, 0, nOfVertices);
+    	glBindVertexArray(vao2);
+        glDrawArrays(GL_TRIANGLES, 0, nOfVertices);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -15,16 +15,17 @@ SRCDIR 		:= ./src
 OBJDIR 		:= ./obj
 OBJS		:= $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))
 SRCS		:= $(addprefix $(SRCDIR)/,$(SRCS))
+OS			:= -lglfw -ldl -pthread -lm -L/usr/lib64 -lGLEW -lGL -lX11 -lGLU -lOpenGL
 
 # **************************************************************************** #
 
-ifdef LINUX #Compile with LINUX=1
-	OS += -lglfw -ldl -pthread -lm -L/usr/lib64 -lGLEW -lGL -lX11 -lGLU -lOpenGL
-endif
-
-ifndef LINUX
-	OS += -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit
-endif
+# ifdef LINUX #Compile with LINUX=1
+# 	OS += -lglfw -ldl -pthread -lm -L/usr/lib64 -lGLEW -lGL -lX11 -lGLU -lOpenGL
+# endif
+#
+# ifndef LINUX
+# 	OS += -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit
+# endif
 
 all: $(NAME)
 
@@ -35,6 +36,8 @@ $(NAME): $(OBJS)
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(OBJDIR)
 	@$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS)
+
+run: all 
 
 clean:
 	@rm -rf $(OBJDIR)
