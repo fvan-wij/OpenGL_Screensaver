@@ -1,6 +1,6 @@
-// #include <GL/glew.h>
+
 #include "../includes/GLEW/include/GL/glew.h"
-#include <GLFW/glfw3.h>
+#include "../includes/GLFW/include/GLFW/glfw3.h"
 
 
 #include <iostream>
@@ -169,6 +169,7 @@ int main(int argc, char *argv[])
     const int       height = 1600;
     const int       nOfShapes = 150;
     s_vec2          t_pos;
+	double mx, my;
 
 	if (argc != 2)
 	{
@@ -263,25 +264,23 @@ int main(int argc, char *argv[])
     glUniform3f(transformLoc, t_pos.x, t_pos.y, 0.0);
     glBindVertexArray(vao1);
 
-    float randomX[nOfShapes];
-    float randomY[nOfShapes];
-    float max = 2.0f;
-    float min = -2.0f;
-	double mx, my;
-
-
-    for (int i = 0; i < nOfShapes; i++)
-    {
-        randomX[i] = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
-        randomY[i] = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
-    }
+ //    float randomX[nOfShapes];
+ //    float randomY[nOfShapes];
+ //    float max = 2.0f;
+ //    float min = -2.0f;
+	//
+	// //creating random values
+ //    for (int i = 0; i < nOfShapes; i++)
+ //    {
+ //        randomX[i] = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
+ //        randomY[i] = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
+ //    }
     while (!glfwWindowShouldClose(window))
     {
         //Clearing the screen
         glClearColor(0.9f, 0.9f, 0.9f, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-
 
         //Input
         mouse = getMousePosNDC(window, width, height);
@@ -291,26 +290,20 @@ int main(int argc, char *argv[])
         t_pos.x += incX / 50;
         t_pos.y += incY / 50;
         processInput(window);
-
+		
+		//Uniforms
        	glUniform1f(timeFrag, inc);
 		glUniform2f(transformLoc, mouse.x, mouse.y);
     	glfwGetCursorPos(window, &mx, &my);
 		glUniform2f(mousePosition, mx, my);
 
-        //Drawcall
-        // for (int i = 0; i < nOfShapes; i++)
-        // {
-        //     glUniform3f(transformLoc, t_pos.x + randomX[i], t_pos.y + randomY[i], 0.0);
-        //     glUniform1f(sineDriver, sin(inc));
-        //     glUniform3f(color, randomX[i], randomY[i], sin(inc));
-        //     glDrawArrays(GL_TRIANGLES, 0, nOfVertices);
-        // }
-
+		//Drawcall
     	glBindVertexArray(vao1);
         glDrawArrays(GL_TRIANGLES, 0, nOfVertices);
     	glBindVertexArray(vao2);
         glDrawArrays(GL_TRIANGLES, 0, nOfVertices);
 
+		//Bufferswapping & event polling
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

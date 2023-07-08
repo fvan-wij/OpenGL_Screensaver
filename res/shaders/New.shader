@@ -34,8 +34,8 @@ void main()
 	vec2 p = gl_FragCoord.xy / iResolution.xy;
 
 	vec3 col = vec3(0.8, 0.2, 0.4);		
-	col.x *= p.x * p.y + sin(u_Time);
-	//col += length(p - vec2(0.5, 0.25));
+	//col.x *= p.x * p.y + sin(u_Time);
+	col += length(p - vec2(0.5, 0.25));
 	out_color = vec4(col, 1.0);
 	//marker(u_Mouse, vec4(1.0, 0.0, 0.0, 1.0));
 };

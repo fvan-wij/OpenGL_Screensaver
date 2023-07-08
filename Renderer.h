@@ -1,6 +1,4 @@
-#pragma once
-
-#include <GL/glew.h>
+#include "./includes/GLEW/include/GL/glew.h"
 
 //   Debugging
 void GLClearError();

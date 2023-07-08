@@ -1,7 +1,7 @@
 NAME		:= Screensaver
 CC			:= g++
-CFLAGS		:= -Wall -Wextra 
-HEADERS		:= -I ./includes 
+CFLAGS		:= -Wall Wextra 
+HEADERS		:= -I./includes
 SRCS		:= 	Application.cpp \
 				IndexBuffer.cpp \
 				Renderer.cpp \
@@ -15,7 +15,7 @@ SRCDIR 		:= ./src
 OBJDIR 		:= ./obj
 OBJS		:= $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))
 SRCS		:= $(addprefix $(SRCDIR)/,$(SRCS))
-OS			:= -lglfw -ldl -pthread -lm -L/usr/lib64 -lGLEW -lGL -lX11 -lGLU -lOpenGL
+OS			:= -lglfw -ldl -pthread -l$(OS) m -L/usr/lib64 -lGLEW -lGLU -lGL 
 
 # **************************************************************************** #
 
@@ -27,17 +27,21 @@ OS			:= -lglfw -ldl -pthread -lm -L/usr/lib64 -lGLEW -lGL -lX11 -lGLU -lOpenGL
 # 	OS += -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit
 # endif
 
-all: $(NAME)
+all: mkdir $(NAME)
+
+mkdir: 
+	@mkdir -p $(OBJDIR)
 
 $(NAME): $(OBJS)
 	@$(CC) $^ $(OS) $(HEADERS) $(HPP) -o $(NAME)
-	# @$(CC) $^ $(OS) $(HEADERS) $(HPP) -g -fsanitize=address -o $(NAME)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	@mkdir -p $(OBJDIR)
-	@$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS)
+	@$(CC) $(CFLAGS) $(HEADERS) -o $@ -c $< 
 
 run: all 
+
+debug: $(OBJS)
+	@$(CC) $^ $(OS) $(HEADERS) $(HPP) -g -fsanitize=address -o $(NAME)
 
 clean:
 	@rm -rf $(OBJDIR)
