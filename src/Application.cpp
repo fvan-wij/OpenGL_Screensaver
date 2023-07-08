@@ -161,7 +161,7 @@ static void processInput(GLFWwindow* window)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
     GLFWwindow*     window;
     NDC_MousePos    mouse;
@@ -170,9 +170,12 @@ int main(void)
     const int       nOfShapes = 150;
     s_vec2          t_pos;
 
-
-    
-
+	if (argc != 2)
+	{
+		std::cout << "Error: invalid arguments" << std::endl;
+		std::cout << "Hint: Argv[0] should be executable, Argv[1] should be path to .shader file" << std::endl;
+		exit (-1);
+	}
     /* Initialize the library */
     if (!glfwInit())
         return -1;
@@ -236,23 +239,22 @@ int main(void)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
     glEnableVertexAttribArray(0);
 
-
-    // IndexBuffer ib(indices, 6);
-    ShaderProgramSource shaderSource = ParseShader("/home/flip/Documents/OpenGL_Screensaver/res/shaders/Strength.shader");
-
+	// Shader compilation
+    ShaderProgramSource shaderSource = ParseShader(argv[1]);
     unsigned int shader = CreateShader(shaderSource.VertexSource, shaderSource.FragmentSource);
     glUseProgram(shader);
 
+	//Uniforms
     int color = glGetUniformLocation(shader, "u_Color");
     int transformLoc = glGetUniformLocation(shader, "u_Transform");
     int sineDriver = glGetUniformLocation(shader, "sineDriver");
     int timeFrag = glGetUniformLocation(shader, "u_Time");
+	int mousePosition = glGetUniformLocation(shader, "u_Mouse");
 
     float inc = 0.0001f;
     float incX;
     float incY;
-    // float x = 0;
-	// float y = 0;
+
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     t_pos.x = -0.75;
@@ -265,6 +267,9 @@ int main(void)
     float randomY[nOfShapes];
     float max = 2.0f;
     float min = -2.0f;
+	double mx, my;
+
+
     for (int i = 0; i < nOfShapes; i++)
     {
         randomX[i] = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
@@ -287,8 +292,10 @@ int main(void)
         t_pos.y += incY / 50;
         processInput(window);
 
-       	glUniform1f(timeFrag, inc * 4);
+       	glUniform1f(timeFrag, inc);
 		glUniform2f(transformLoc, mouse.x, mouse.y);
+    	glfwGetCursorPos(window, &mx, &my);
+		glUniform2f(mousePosition, mx, my);
 
         //Drawcall
         // for (int i = 0; i < nOfShapes; i++)
